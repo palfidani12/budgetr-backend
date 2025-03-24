@@ -1,5 +1,8 @@
 import { Base } from 'src/typeorm-entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { User } from './user.entity';
+import { Transaction } from './transaction.entity';
+import { RecurringTransaction } from './recurring-transaction.entity';
 
 @Entity()
 export class MoneyPocket extends Base {
@@ -17,4 +20,16 @@ export class MoneyPocket extends Base {
 
   @Column()
   iconUrl: string;
+
+  @ManyToOne(() => User, (user) => user.moneyPockets)
+  user: User;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.moneyPocket)
+  transactions: Transaction[];
+
+  @OneToMany(
+    () => RecurringTransaction,
+    (recurringTransaction) => recurringTransaction.moneyPocket,
+  )
+  recurringTransactions: RecurringTransaction[];
 }

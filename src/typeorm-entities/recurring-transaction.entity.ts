@@ -1,5 +1,7 @@
 import { Base } from 'src/typeorm-entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { MoneyPocket } from './money-pocket.entity';
+import { TransactionCategory } from './transaction-category.entity';
 
 @Entity()
 export class RecurringTransaction extends Base {
@@ -20,4 +22,14 @@ export class RecurringTransaction extends Base {
 
   @Column()
   frequency: string;
+
+  @ManyToOne(
+    () => MoneyPocket,
+    (moneyPocket) => moneyPocket.recurringTransactions,
+  )
+  moneyPocket: MoneyPocket;
+
+  @ManyToMany(() => TransactionCategory)
+  @JoinTable()
+  categories: TransactionCategory[];
 }

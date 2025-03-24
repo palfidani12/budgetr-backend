@@ -1,5 +1,6 @@
 import { Base } from 'src/typeorm-entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class SavingPocket extends Base {
@@ -26,4 +27,7 @@ export class SavingPocket extends Base {
 
   @Column()
   goalSetDeadline: string;
+
+  @ManyToOne(() => User, (user) => user.savingPockets)
+  user: User;
 }

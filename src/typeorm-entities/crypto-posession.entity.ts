@@ -1,5 +1,6 @@
 import { Base } from 'src/typeorm-entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class CryptoPosession extends Base {
@@ -23,4 +24,7 @@ export class CryptoPosession extends Base {
 
   @Column()
   sellTime: string;
+
+  @ManyToOne(() => User, (user) => user.cryptoPosessions)
+  user: User;
 }

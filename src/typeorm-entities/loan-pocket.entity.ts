@@ -1,5 +1,6 @@
 import { Base } from 'src/typeorm-entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class LoanPocket extends Base {
@@ -20,4 +21,7 @@ export class LoanPocket extends Base {
 
   @Column()
   totalLoanAmount: number;
+
+  @ManyToOne(() => User, (user) => user.loanPockets)
+  user: User;
 }
