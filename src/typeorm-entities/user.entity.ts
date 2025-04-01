@@ -1,4 +1,4 @@
-import { Base } from 'src/typeorm-entities/base.entity';
+import { Base } from '../typeorm-entities/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { LoanPocket } from './loan-pocket.entity';
 import { SavingPocket } from './saving-pocket.entity';
@@ -8,7 +8,7 @@ import { MoneyPocket } from './money-pocket.entity';
 
 @Entity()
 export class User extends Base {
-  @Column()
+  @Column({ nullable: true })
   nickName: string;
 
   @Column()

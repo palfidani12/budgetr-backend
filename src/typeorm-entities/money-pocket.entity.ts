@@ -1,4 +1,4 @@
-import { Base } from 'src/typeorm-entities/base.entity';
+import { Base } from '../typeorm-entities/base.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Transaction } from './transaction.entity';

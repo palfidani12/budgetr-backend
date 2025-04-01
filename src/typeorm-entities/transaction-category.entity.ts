@@ -1,4 +1,4 @@
-import { Base } from 'src/typeorm-entities/base.entity';
+import { Base } from '../typeorm-entities/base.entity';
 import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { RecurringTransaction } from './recurring-transaction.entity';
 import { Transaction } from './transaction.entity';

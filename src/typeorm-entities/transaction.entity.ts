@@ -1,4 +1,4 @@
-import { Base } from 'src/typeorm-entities/base.entity';
+import { Base } from '../typeorm-entities/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { MoneyPocket } from './money-pocket.entity';
 import { TransactionCategory } from './transaction-category.entity';
