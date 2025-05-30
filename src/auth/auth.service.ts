@@ -8,6 +8,16 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/typeorm-entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
+type ValidateUserProps = {
+  email: string;
+  givenPassword: string;
+};
+
+type LoginProps = {
+  email: string;
+  id: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,21 +25,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, givenPassword: string) {
+  async validateUser(props: ValidateUserProps) {
     const secret = process.env.PASSWORD_HASHING_SECRET;
     let user: User | null;
 
     if (!secret) {
-      /* console.error(
-        'Environment variable is not set (PASSWORD_HASHING_SECRET)',
-      ); */
       throw new InternalServerErrorException(
         'PASSWORD_HASHING_SECRET environment variable missing',
       );
     }
 
     try {
-      user = await this.userService.findUserByEmail(email);
+      user = await this.userService.findUserByEmail(props.email);
     } catch (error) {
       throw new InternalServerErrorException(
         error,
@@ -43,7 +50,7 @@ export class AuthService {
 
     try {
       if (
-        await argon2.verify(user.password, givenPassword, {
+        await argon2.verify(user.password, props.givenPassword, {
           secret: Buffer.from(secret),
         })
       ) {
@@ -60,9 +67,8 @@ export class AuthService {
     return null;
   }
 
-  login({ email, id }: { email: string; id: string }) {
-    // add types
-    const payload = { email, sub: id };
+  login(props: LoginProps) {
+    const payload = { email: props.email, sub: props.id };
     return {
       accessToken: this.jwtService.sign(payload),
     };

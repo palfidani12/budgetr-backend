@@ -9,8 +9,9 @@ import {
 import * as argon2 from 'argon2';
 
 describe('AuthService', () => {
-  let service: AuthService;
+  let authService: AuthService;
   const findUserByEmailMock = jest.fn();
+  const jwtServiceSignMock = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,56 +23,67 @@ describe('AuthService', () => {
             findUserByEmail: findUserByEmailMock,
           },
         },
-        JwtService,
+        {
+          provide: JwtService,
+          useValue: {
+            sign: jwtServiceSignMock,
+          },
+        },
       ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = module.get<AuthService>(AuthService);
     process.env.PASSWORD_HASHING_SECRET = 'mockedSecret';
     findUserByEmailMock.mockClear();
     jest.spyOn(argon2, 'verify').mockClear();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 
   describe('validateUser', () => {
+    const mockValidateUserProps = {
+      email: 'sandor@gmail.com',
+      givenPassword: 'sandor',
+    };
     it('should throw error if environment variable is undefined', async () => {
       delete process.env.PASSWORD_HASHING_SECRET;
-      await expect(service.validateUser('email', 'sa')).rejects.toThrow(
-        InternalServerErrorException,
-      );
+      await expect(
+        authService.validateUser(mockValidateUserProps),
+      ).rejects.toThrow(InternalServerErrorException);
     });
 
     it('should throw error if there is an error while retrieving the user', async () => {
       findUserByEmailMock.mockRejectedValue(new Error());
-      await expect(service.validateUser('email', 'sa')).rejects.toThrow(
-        InternalServerErrorException,
-      );
+      await expect(
+        authService.validateUser(mockValidateUserProps),
+      ).rejects.toThrow(InternalServerErrorException);
     });
 
     it('should call userService with correct email', async () => {
       jest.spyOn(argon2, 'verify').mockResolvedValue(false);
       findUserByEmailMock.mockResolvedValue({ password: 'asdasd' });
-      await service.validateUser('email', 'sa');
+      await authService.validateUser(mockValidateUserProps);
       expect(findUserByEmailMock).toHaveBeenCalledTimes(1);
-      expect(findUserByEmailMock).toHaveBeenCalledWith('email');
+      expect(findUserByEmailMock).toHaveBeenCalledWith(
+        mockValidateUserProps.email,
+      );
     });
 
     it('should throw 404 if there are no user matching the email', async () => {
       findUserByEmailMock.mockResolvedValue(null);
-      await expect(service.validateUser('email', 'sa')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        authService.validateUser(mockValidateUserProps),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw 505 if there is an error during the validation of the token', async () => {
       jest.spyOn(argon2, 'verify').mockRejectedValue(Error);
       findUserByEmailMock.mockResolvedValue({ password: 'asdasd' });
-      await expect(service.validateUser('email', 'sa')).rejects.toThrow(
-        InternalServerErrorException,
-      );
+      await expect(
+        authService.validateUser(mockValidateUserProps),
+      ).rejects.toThrow(InternalServerErrorException);
     });
 
     it('should return the user without the password hash, if the verification is correct', async () => {
@@ -81,7 +93,7 @@ describe('AuthService', () => {
         id: 'sandor',
       });
 
-      expect(await service.validateUser('email', 'sa')).toEqual({
+      expect(await authService.validateUser(mockValidateUserProps)).toEqual({
         id: 'sandor',
       });
     });
@@ -93,12 +105,25 @@ describe('AuthService', () => {
         id: 'sandor',
       });
 
-      expect(await service.validateUser('email', 'sa')).toEqual(null);
-      expect(verifySpy).toHaveBeenCalledWith('asdasd', 'sa', {
-        secret: Buffer.from('mockedSecret'),
-      });
+      expect(await authService.validateUser(mockValidateUserProps)).toEqual(
+        null,
+      );
+      expect(verifySpy).toHaveBeenCalledWith(
+        'asdasd',
+        mockValidateUserProps.givenPassword,
+        {
+          secret: Buffer.from('mockedSecret'),
+        },
+      );
     });
   });
 
-  describe('login', () => {});
+  describe('login', () => {
+    it('should sing token with correct props', () => {
+      jwtServiceSignMock.mockReturnValue('token-ade234c2432');
+      expect(
+        authService.login({ email: 'sandor@gmail.com', id: 'user-2313' }),
+      ).toEqual({ accessToken: 'token-ade234c2432' });
+    });
+  });
 });
