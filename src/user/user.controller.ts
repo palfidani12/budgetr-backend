@@ -67,4 +67,14 @@ export class UserController {
       throw new BadRequestException('Error while deleting user' + error);
     }
   }
+
+  @Get('getLoggedInUser') //TODO
+  async getLoggedInUser() {
+    try {
+      const user = await this.userService.findAllUsers();
+      return { users: user };
+    } catch (error) {
+      throw new BadRequestException('User request failed: ' + error);
+    }
+  }
 }

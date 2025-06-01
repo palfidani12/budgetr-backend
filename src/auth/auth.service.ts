@@ -69,6 +69,7 @@ export class AuthService {
 
   login(props: LoginProps) {
     const payload = { email: props.email, sub: props.id };
+
     return {
       accessToken: this.jwtService.sign(payload),
     };

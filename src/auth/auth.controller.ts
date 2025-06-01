@@ -5,8 +5,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { User } from 'src/typeorm-entities/user.entity';
 
 type LoginRequestType = {
-  email: string;
-  userId: string;
+  user: Partial<User>;
 };
 
 type LogoutRequestType = {
@@ -22,12 +21,12 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('login') // props: {email: '', password: ''} but because the localAuthGuard we get user only
   login(@Request() req: LoginRequestType) {
-    return this.authService.login({ email: req.email, id: req.userId });
+    return this.authService.login({ email: req.user.email!, id: req.user.id! });
   }
 
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @Post('logout')
   logout(@Request() req: LogoutRequestType) {
     return req.logout();

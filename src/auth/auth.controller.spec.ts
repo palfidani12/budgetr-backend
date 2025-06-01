@@ -41,8 +41,10 @@ describe('AuthController', () => {
       authServiceLoginFnMock.mockReturnValueOnce(mockLoginReturnValue);
 
       const result = authController.login({
-        email: mockUser.email,
-        userId: mockUser.id,
+        user: {
+          email: mockUser.email,
+          id: mockUser.id,
+        },
       });
       expect(authServiceLoginFnMock).toHaveBeenCalledTimes(1);
       expect(authServiceLoginFnMock).toHaveBeenCalledWith(mockUser);
