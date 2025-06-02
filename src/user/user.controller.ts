@@ -6,75 +6,57 @@ import {
   Patch,
   Param,
   Delete,
-  BadRequestException,
-  NotFoundException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { User } from 'src/typeorm-entities/user.entity';
+
+type GetProfileRequestType = {
+  user: Partial<User>;
+};
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // TODO: maybe move to auth controller
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
-    try {
-      const user = await this.userService.createUser(createUserDto);
-      return { message: 'User created successfully', user };
-    } catch (error) {
-      throw new BadRequestException('User creation failed: ' + error);
-    }
+    const user = await this.userService.createUser(createUserDto);
+    return { message: 'User created successfully', user };
   }
 
   @Get()
   async findAll() {
-    try {
-      const user = await this.userService.findAllUsers();
-      return { users: user };
-    } catch (error) {
-      throw new BadRequestException('User request failed: ' + error);
-    }
+    const user = await this.userService.findAllUsers();
+    return { users: user };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    try {
-      const user = await this.userService.findUser(id);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      return user;
-    } catch (error) {
-      throw new BadRequestException('User request failed: ' + error);
-    }
+    const user = await this.userService.findUser(id);
+    return user;
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    try {
-      return await this.userService.updateUser(id, updateUserDto);
-    } catch (error) {
-      throw new BadRequestException('Error while updating user' + error);
-    }
+    const updateResult = await this.userService.updateUser(id, updateUserDto);
+    return updateResult;
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    try {
-      return await this.userService.removeUser(id);
-    } catch (error) {
-      throw new BadRequestException('Error while deleting user' + error);
-    }
+    const deletedUser = await this.userService.removeUser(id);
+    return deletedUser;
   }
 
-  @Get('getLoggedInUser') //TODO
-  async getLoggedInUser() {
-    try {
-      const user = await this.userService.findAllUsers();
-      return { users: user };
-    } catch (error) {
-      throw new BadRequestException('User request failed: ' + error);
-    }
+  @UseGuards(JwtAuthGuard)
+  @Get('getLoggedInUser')
+  getLoggedInUser(@Request() req: GetProfileRequestType) {
+    return req.user;
   }
 }

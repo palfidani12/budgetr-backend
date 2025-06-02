@@ -1,7 +1,6 @@
-import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import { User } from 'src/typeorm-entities/user.entity';
 
 type LoginRequestType = {
@@ -10,10 +9,6 @@ type LoginRequestType = {
 
 type LogoutRequestType = {
   logout: () => void;
-};
-
-type GetProfileRequestType = {
-  user: Partial<User>;
 };
 
 @Controller('auth')
@@ -30,11 +25,5 @@ export class AuthController {
   @Post('logout')
   logout(@Request() req: LogoutRequestType) {
     return req.logout();
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req: GetProfileRequestType) {
-    return req.user;
   }
 }

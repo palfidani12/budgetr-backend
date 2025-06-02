@@ -58,12 +58,5 @@ describe('AuthController', () => {
       expect(mockRequestBody.logout).toHaveBeenCalledTimes(1);
       expect(result).toBe(undefined);
     });
-
-    it('get profile route should return the user from the request', () => {
-      const mockUser = { email: 'sanfor@gams.com', id: 'id-1' } as User;
-
-      const result = authController.getProfile({ user: mockUser });
-      expect(result).toBe(mockUser);
-    });
   });
 });
