@@ -15,6 +15,8 @@ import { StockPosession } from './typeorm-entities/stock-posession.entity';
 import { TransactionCategory } from './typeorm-entities/transaction-category.entity';
 import { Transaction } from './typeorm-entities/transaction.entity';
 import { User } from './typeorm-entities/user.entity';
+import { TransactionModule } from './transaction/transaction.module';
+import { ScheduledTransactionsModule } from './scheduled-transactions/scheduled-transactions.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { User } from './typeorm-entities/user.entity';
     }),
     AuthModule,
     UserModule,
+    TransactionModule,
+    ScheduledTransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
