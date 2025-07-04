@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { TransactionService } from './transaction.service';
+// import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
 @Controller('transaction')
 export class TransactionController {
@@ -20,28 +21,22 @@ export class TransactionController {
     return this.transactionService.createTransaction(createTransactionDto);
   }
 
-  @Get()
-  getTransaction() {
-    return undefined;
-  }
-
   @Get(':id')
-  getTransactionById(@Param('id') id: string) {
-    return id;
+  async getTransactionById(@Param('id') id: string) {
+    return await this.transactionService.getTransationById(id);
   }
 
   @Patch(':id')
   updateTransaction(
     @Param('id') id: string,
-    // @Body() updateUserDto: UpdateUserDto,
+    // @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
     // const updateResult = await this.userService.updateUser(id, updateUserDto);
     return `updateResult ${id}`;
   }
 
   @Delete(':id')
-  removeTransaction(@Param('id') id: string) {
-    // const deletedUser = await this.userService.removeUser(id);
-    return { deletedUser: id };
+  async removeTransaction(@Param('id') id: string) {
+    return await this.transactionService.deleteTransaction(id);
   }
 }

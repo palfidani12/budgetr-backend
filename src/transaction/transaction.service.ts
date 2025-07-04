@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from 'src/typeorm-entities/transaction.entity';
@@ -63,6 +64,41 @@ export class TransactionService {
       throw new InternalServerErrorException(
         error,
         'Error while creating transaction',
+      );
+    }
+  }
+
+  async getTransationById(id: string) {
+    let transaction: Transaction | null;
+    try {
+      transaction = await this.transactionRepository.findOneBy({ id });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Failed to retrieve transaction',
+      );
+    }
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction with given id not found');
+    }
+
+    return transaction;
+  }
+
+  async updateTransaction() {}
+
+  async deleteTransaction(id: string) {
+    const transactionToRemove = await this.getTransationById(id);
+
+    try {
+      const removedTransaction =
+        await this.transactionRepository.softRemove(transactionToRemove);
+      return removedTransaction;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Failed to delete transaction',
       );
     }
   }
