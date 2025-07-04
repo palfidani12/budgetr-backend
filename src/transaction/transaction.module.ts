@@ -8,9 +8,7 @@ import { TransactionCategory } from 'src/typeorm-entities/transaction-category.e
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Transaction]),
-    TypeOrmModule.forFeature([MoneyPocket]),
-    TypeOrmModule.forFeature([TransactionCategory]),
+    TypeOrmModule.forFeature([Transaction, MoneyPocket, TransactionCategory]),
   ],
   controllers: [TransactionController],
   providers: [TransactionService],

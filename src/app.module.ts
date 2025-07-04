@@ -17,6 +17,7 @@ import { Transaction } from './typeorm-entities/transaction.entity';
 import { User } from './typeorm-entities/user.entity';
 import { TransactionModule } from './transaction/transaction.module';
 import { ScheduledTransactionsModule } from './scheduled-transactions/scheduled-transactions.module';
+import { MoneyPocketModule } from './money-pocket/money-pocket.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ScheduledTransactionsModule } from './scheduled-transactions/scheduled-
     UserModule,
     TransactionModule,
     ScheduledTransactionsModule,
+    MoneyPocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
