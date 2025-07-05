@@ -7,3 +7,5 @@
 - [ ] For GET moneypocket add a param option of withTransactions so we only fetch transactions when needed
 - [ ] Protect endpoints with authentication after all are done
 - [ ] Update transaction endpoint created with attention to currency (should be the same with the money pocket) 
+- [ ] Migrate class-validator to zod 
+- [ ] Finish pocket type validation
