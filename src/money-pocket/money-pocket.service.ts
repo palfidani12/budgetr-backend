@@ -118,7 +118,7 @@ export class MoneyPocketService {
     }
 
     try {
-      await this.moneyPocketRepository.save(moneyPocket);
+      return await this.moneyPocketRepository.save(moneyPocket);
     } catch (error) {
       throw new InternalServerErrorException(
         error,

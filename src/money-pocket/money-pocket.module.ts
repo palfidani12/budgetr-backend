@@ -7,7 +7,7 @@ import { MoneyPocket } from 'src/typeorm-entities/money-pocket.entity';
 import { Transaction } from 'src/typeorm-entities/transaction.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, MoneyPocket, Transaction])],
+  imports: [TypeOrmModule.forFeature([MoneyPocket, User, Transaction])],
   controllers: [MoneyPocketController],
   providers: [MoneyPocketService],
 })
