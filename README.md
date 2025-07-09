@@ -9,3 +9,4 @@
 - [ ] Update transaction endpoint created with attention to currency (should be the same with the money pocket) 
 - [ ] Migrate class-validator to zod 
 - [ ] Finish pocket type validation
+- [ ] Fix .env variables in auth strategies
