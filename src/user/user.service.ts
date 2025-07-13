@@ -67,7 +67,10 @@ export class UserService {
 
   async findUser(id: string) {
     try {
-      const users = await this.userRepository.findOneBy({ id });
+      const users = await this.userRepository.findOne({
+        where: { id },
+        relations: ['moneyPockets'],
+      });
       return users;
     } catch (error) {
       throw new InternalServerErrorException(

@@ -107,6 +107,7 @@ export class AuthService {
 
     return {
       accessToken,
+      userId: props.id,
     };
   }
 

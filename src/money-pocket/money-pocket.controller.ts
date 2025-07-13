@@ -17,9 +17,6 @@ export class MoneyPocketController {
 
   @Post()
   async createPocket(@Body() createMoneyPocketDto: CreateMoneyPocketDto) {
-    console.log('create dto', createMoneyPocketDto);
-    return undefined;
-
     return await this.moneyPocketService.create(createMoneyPocketDto);
   }
 
