@@ -17,7 +17,7 @@ export class Transaction extends Base {
   @Column()
   vendorName: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   transactionTime: string;
 
   @ManyToOne(() => MoneyPocket, (moneyPocket) => moneyPocket.transactions)

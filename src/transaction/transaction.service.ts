@@ -10,6 +10,7 @@ import { In, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { MoneyPocket } from 'src/typeorm-entities/money-pocket.entity';
 import { TransactionCategory } from 'src/typeorm-entities/transaction-category.entity';
+import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
 @Injectable()
 export class TransactionService {
@@ -68,7 +69,7 @@ export class TransactionService {
     }
   }
 
-  async getTransationById(id: string) {
+  async getTransactionById(id: string) {
     let transaction: Transaction | null;
     try {
       transaction = await this.transactionRepository.findOneBy({ id });
@@ -86,10 +87,47 @@ export class TransactionService {
     return transaction;
   }
 
-  async updateTransaction() {}
+  async getTransactions() {
+    let transactions: Transaction[] | null;
+    try {
+      transactions = await this.transactionRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Failed to retrieve transaction',
+      );
+    }
+
+    if (!transactions) {
+      throw new NotFoundException('Transaction with given id not found');
+    }
+
+    return transactions;
+  }
+
+  async updateTransaction(
+    transactionId: string,
+    updateTransactionDto: UpdateTransactionDto,
+  ) {
+    const transaction = await this.getTransactionById(transactionId);
+    if (updateTransactionDto.amount) {
+      transaction.amount = updateTransactionDto.amount;
+    }
+    if (updateTransactionDto.transactionName) {
+      transaction.name = updateTransactionDto.transactionName;
+    }
+    if (updateTransactionDto.vendorName) {
+      transaction.vendorName = updateTransactionDto.vendorName;
+    }
+    if (updateTransactionDto.transactionTime) {
+      transaction.transactionTime = updateTransactionDto.transactionTime;
+    }
+
+    return await this.transactionRepository.save(transaction);
+  }
 
   async deleteTransaction(id: string) {
-    const transactionToRemove = await this.getTransationById(id);
+    const transactionToRemove = await this.getTransactionById(id);
 
     try {
       const removedTransaction =

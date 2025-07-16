@@ -10,3 +10,4 @@
 - [ ] Migrate class-validator to zod 
 - [ ] Finish pocket type validation
 - [ ] Fix .env variables in auth strategies
+- [ ] Validate ids given as params to requests

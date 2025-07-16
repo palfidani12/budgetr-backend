@@ -9,11 +9,14 @@ import { User } from '../typeorm-entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
+import { Transaction } from 'src/typeorm-entities/transaction.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Transaction)
+    private transactionRepository: Repository<Transaction>,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
@@ -124,6 +127,36 @@ export class UserService {
       return removedUser;
     } catch (error) {
       throw new InternalServerErrorException(error, 'Failed to delete user');
+    }
+  }
+
+  async getUserSummary(userId: string, from: string, to: string) {
+    console.log('props: ', { id: userId, from, to });
+    try {
+      const qb = this.transactionRepository
+        .createQueryBuilder('transaction')
+        .leftJoin('transaction.moneyPocket', 'money_pocket')
+        .select([
+          'SUM(CASE WHEN transaction.amount > 0 THEN transaction.amount ELSE 0 END) AS "income"',
+          `SUM(CASE WHEN transaction.amount < 0 THEN transaction.amount ELSE 0 END) AS "spending"`,
+          'transaction.currency as "currency"',
+        ])
+        .where('money_pocket.userId = :userId', {
+          userId,
+        })
+        .andWhere('transaction.transactionTime BETWEEN :from AND :to', {
+          from,
+          to,
+        })
+        .groupBy('transaction.currency');
+
+      const result:
+        | { income: number; spending: number; currency: string }[]
+        | undefined = await qb.getRawMany();
+
+      return result;
+    } catch (error) {
+      console.error(error);
     }
   }
 }

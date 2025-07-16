@@ -11,6 +11,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import { Transaction } from 'src/typeorm-entities/transaction.entity';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -36,6 +37,8 @@ describe('UserService', () => {
     softRemove: jest.fn(),
   };
 
+  const mockTransactionRepository = {};
+
   beforeAll(async () => {
     module = await Test.createTestingModule({
       providers: [
@@ -43,6 +46,10 @@ describe('UserService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
+        },
+        {
+          provide: getRepositoryToken(Transaction),
+          useValue: mockTransactionRepository,
         },
       ],
     }).compile();
@@ -151,16 +158,19 @@ describe('UserService', () => {
 
   describe('findUser', () => {
     it('should throw error if user retrieval throws error', async () => {
-      mockUserRepository.findOneBy.mockRejectedValue(new Error());
+      mockUserRepository.findOne.mockRejectedValue(new Error());
 
       await expect(userService.findUser('user1')).rejects.toThrow(
         InternalServerErrorException,
       );
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: 'user1' });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: 'user1' },
+        relations: ['moneyPockets'],
+      });
     });
 
     it('should return the result of queryfn', async () => {
-      mockUserRepository.findOneBy.mockResolvedValue({
+      mockUserRepository.findOne.mockResolvedValue({
         id: 'user1',
         nickName: 'sandor',
       });
@@ -170,8 +180,9 @@ describe('UserService', () => {
         nickName: 'sandor',
       });
 
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
-        id: 'user1',
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'user1' },
+        relations: ['moneyPockets'],
       });
     });
 

@@ -145,7 +145,7 @@ export class AuthService {
         },
       );
 
-      return { accessToken: newAccessToken };
+      return { accessToken: newAccessToken, userId: user.id };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }

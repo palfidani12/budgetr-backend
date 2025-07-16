@@ -8,8 +8,8 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
+      // whitelist: true, TODO: Add these back
+      // forbidNonWhitelisted: true,
     }),
   );
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call

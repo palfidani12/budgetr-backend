@@ -23,6 +23,25 @@ type GetProfileRequestType = {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('summary')
+  async getUserSummary(
+    @Request()
+    req: {
+      body: { from: string; to: string };
+      user: { userId: string };
+    },
+  ) {
+    const fromTimestamp = req.body.from;
+    const toTimestamp = req.body.to;
+
+    return await this.userService.getUserSummary(
+      req.user.userId,
+      fromTimestamp,
+      toTimestamp,
+    );
+  }
+
   // TODO: maybe move to auth controller
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
