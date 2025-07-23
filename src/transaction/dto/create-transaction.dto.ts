@@ -7,10 +7,6 @@ export class CreateTransactionDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly currency: string;
-
-  @IsString()
-  @IsNotEmpty()
   readonly transactionName: string;
 
   @IsString()

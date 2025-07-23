@@ -24,6 +24,7 @@ export class TransactionService {
   ) {}
 
   async createTransaction(props: CreateTransactionDto) {
+    // creating a transaction should update the pocket balance
     let moneyPocket: MoneyPocket | null;
     let transactionCategories: TransactionCategory[];
 
@@ -51,7 +52,7 @@ export class TransactionService {
     try {
       const transaction = this.transactionRepository.create({
         amount: props.amount,
-        currency: props.currency,
+        currency: moneyPocket.currency,
         name: props.transactionName,
         vendorName: props.vendorName,
         transactionTime: props.transactionTime,

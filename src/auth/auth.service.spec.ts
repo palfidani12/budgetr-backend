@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import { Response } from 'express';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -119,10 +120,11 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
+    const res = { cookie: jest.fn() } as unknown as Response;
     it('should sing token with correct props', () => {
       jwtServiceSignMock.mockReturnValue('token-ade234c2432');
       expect(
-        authService.login({ email: 'sandor@gmail.com', id: 'user-2313' }),
+        authService.login({ email: 'sandor@gmail.com', id: 'user-2313' }, res),
       ).toEqual({ accessToken: 'token-ade234c2432' });
     });
   });

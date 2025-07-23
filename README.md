@@ -11,3 +11,4 @@
 - [ ] Finish pocket type validation
 - [ ] Fix .env variables in auth strategies
 - [ ] Validate ids given as params to requests
+- [ ] Update Auth service tests
